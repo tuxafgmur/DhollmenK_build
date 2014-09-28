@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 ##
 ##
@@ -137,7 +136,7 @@ $(full_target): PRIVATE_OUT_CUSTOM_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_CUST
 ifneq ($(strip $(LOCAL_DROIDDOC_HTML_DIR)),)
 $(full_target): PRIVATE_DROIDDOC_HTML_DIR := -htmldir $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR)
 else
-$(full_target): PRIVATE_DROIDDOC_HTML_DIR := 
+$(full_target): PRIVATE_DROIDDOC_HTML_DIR :=
 endif
 ifneq ($(strip $(LOCAL_ADDITIONAL_HTML_DIR)),)
 $(full_target): PRIVATE_ADDITIONAL_HTML_DIR := -htmldir2 $(LOCAL_PATH)/$(LOCAL_ADDITIONAL_HTML_DIR)
@@ -164,7 +163,7 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
 		head -1 $(PRIVATE_SRC_LIST_FILE) | tr " " "\n" | sort | uniq | tr "\n" " " > $(PRIVATE_SRC_LIST_FILE)_temp; \
 		cat $(PRIVATE_SRC_LIST_FILE) | sed '1 d' >> $(PRIVATE_SRC_LIST_FILE)_temp; \
 		mv $(PRIVATE_SRC_LIST_FILE)_temp $(PRIVATE_SRC_LIST_FILE); \
-		javadoc \
+		javadoc -encoding UTF-8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1280m \
                 $(PRIVATE_PROFILING_OPTIONS) \
@@ -200,7 +199,7 @@ $(full_target): $(full_src_files) $(full_java_lib_deps)
 		head -1 $(PRIVATE_SRC_LIST_FILE) | tr " " "\n" | sort | uniq | tr "\n" " " > $(PRIVATE_SRC_LIST_FILE)_temp; \
 		cat $(PRIVATE_SRC_LIST_FILE) | sed '1 d' >> $(PRIVATE_SRC_LIST_FILE)_temp; \
 		mv $(PRIVATE_SRC_LIST_FILE)_temp $(PRIVATE_SRC_LIST_FILE); \
-		javadoc \
+		javadoc -encoding UTF-8 \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1024m \

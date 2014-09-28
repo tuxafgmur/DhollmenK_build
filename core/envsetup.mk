@@ -25,7 +25,6 @@ ifeq ($(TARGET_PRODUCT),)
 TARGET_PRODUCT := full
 endif
 
-
 # the variant -- the set of files that are included for a build
 ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
 TARGET_BUILD_VARIANT := eng
@@ -137,6 +136,8 @@ endif
 # ---------------------------------------------------------------
 # figure out the output directories
 
+OUT_DIR := $(OUTROM)
+
 ifeq (,$(strip $(OUT_DIR)))
 ifeq (,$(strip $(OUT_DIR_COMMON_BASE)))
 ifneq ($(TOPDIR),)
@@ -151,8 +152,7 @@ endif
 
 DEBUG_OUT_DIR := $(OUT_DIR)/debug
 
-# Move the host or target under the debug/ directory
-# if necessary.
+# Move the host or target under the debug/ directory if necessary.
 TARGET_OUT_ROOT_release := $(OUT_DIR)/target
 TARGET_OUT_ROOT_debug := $(DEBUG_OUT_DIR)/target
 TARGET_OUT_ROOT := $(TARGET_OUT_ROOT_$(TARGET_BUILD_TYPE))

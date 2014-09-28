@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 # Configuration for Linux on ARM.
 # Included by combo/select.mk
@@ -29,7 +28,7 @@
 # The blocks also define specific arch_variant_cflags, which
 # include defines, and compiler settings for the given architecture
 # version.
-#
+
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := armv5te
 endif
@@ -69,12 +68,47 @@ endif
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 ifeq ($(TARGET_USE_O3),true)
-TARGET_arm_CFLAGS :=    -O3 \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing    \
-                        -funswitch-loops
+
+TARGET_arm_CFLAGS := 	-O3 \
+			-DNDEBUG \
+			-fstrict-aliasing \
+			-funsafe-loop-optimizations \
+			-fsection-anchors \
+			-fivopts -ftree-loop-im \
+			-ftree-loop-ivcanon \
+			-ffunction-sections \
+			-fdata-sections \
+			-funswitch-loops \
+			-frename-registers \
+			-fomit-frame-pointer \
+			-fgcse-sm \
+			-fgcse-las \
+			-fweb \
+			-ftracer \
+			-Wno-error=unused-parameter \
+			-Wno-error=unused-but-set-variable \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-parameter \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-enum-compare \
+			-Wno-address \
+			-Wno-unused-variable \
+			-Wno-unused-value \
+			-Wno-format \
+			-Wno-deprecated-declarations \
+			-Wno-sign-compare \
+			-Wno-clobbered \
+			-Wno-strict-aliasing \
+			-Wno-parentheses \
+			-Wno-type-limits \
+			-Wno-multichar
 else
 TARGET_arm_CFLAGS :=    -Os \
+			-DNDEBUG \
                         -fomit-frame-pointer \
                         -fstrict-aliasing    \
                         -fno-zero-initialized-in-bss \
@@ -87,22 +121,51 @@ endif
 
 # Modules can choose to compile some source as thumb.
 ifeq ($(TARGET_USE_O3),true)
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -O3 \
-                            -fomit-frame-pointer \
-                            -fno-strict-aliasing \
-                            -Wstrict-aliasing=2 \
-                            -Werror=strict-aliasing \
-                            -fno-tree-vectorize \
-                            -funsafe-math-optimizations \
-                            -Wno-unused-parameter \
-                            -Wno-unused-value \
-                            -Wno-unused-function
+TARGET_thumb_CFLAGS := 	-mthumb \
+			-O3 \
+			-DNDEBUG \
+			-funsafe-loop-optimizations \
+			-fsection-anchors \
+			-fivopts \
+			-ftree-loop-im \
+			-ftree-loop-ivcanon \
+			-ffunction-sections \
+			-fdata-sections \
+			-funswitch-loops \
+			-frename-registers \
+			-frerun-cse-after-loop \
+			-fomit-frame-pointer \
+			-fgcse-sm \
+			-fgcse-las \
+			-fweb \
+			-ftracer \
+			-Wno-error=unused-parameter \
+			-Wno-error=unused-but-set-variable \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-parameter \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-enum-compare \
+			-Wno-address \
+			-Wno-unused-variable \
+			-Wno-unused-value \
+			-Wno-format \
+			-Wno-deprecated-declarations \
+			-Wno-sign-compare \
+			-Wno-clobbered \
+			-Wno-strict-aliasing \
+			-Wno-parentheses \
+			-Wno-type-limits \
+			-Wno-multichar
 else
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -Os \
-                            -fomit-frame-pointer \
-                            -fno-strict-aliasing
+TARGET_thumb_CFLAGS :=  -mthumb \
+			-Os \
+			-DNDEBUG \
+			-fomit-frame-pointer \
+			-fno-strict-aliasing
 endif
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
@@ -129,8 +192,8 @@ else
    PIE_EXECUTABLE_TRANSFORM := -fPIE -pie
 endif
 
-TARGET_GLOBAL_CFLAGS += \
-			-msoft-float -fpic $(PIE_GLOBAL_CFLAGS) \
+TARGET_GLOBAL_CFLAGS += -msoft-float \
+			-fpic $(PIE_GLOBAL_CFLAGS) \
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
@@ -139,7 +202,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=2 \
 			-fno-short-enums \
-			$(arch_variant_cflags) \
+			 $(arch_variant_cflags) \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
@@ -147,43 +210,116 @@ TARGET_GLOBAL_CFLAGS += \
 # We cannot turn it off blindly since the option is not available
 # in gcc-4.4.x.  We also want to disable sincos optimization globally
 # by turning off the builtin sin function.
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(TARGET_GCC_VERSION)),)
+ifneq ($(filter 4.9 4.9.% 4.8 4.8.% 4.7 4.7.% 4.6 4.6.%, $(TARGET_GCC_VERSION)),)
 TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
 			-fno-strict-volatile-bitfields
 endif
 
-# This is to avoid the dreaded warning compiler message:
-#   note: the mangling of 'va_list' has changed in GCC 4.4
-#
-# The fact that the mangling changed does not affect the NDK ABI
-# very fortunately (since none of the exposed APIs used va_list
-# in their exported C++ functions). Also, GCC 4.5 has already
-# removed the warning from the compiler.
-#
 TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
-TARGET_GLOBAL_LDFLAGS += \
-			-Wl,-z,noexecstack \
+TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack \
 			-Wl,-z,relro \
 			-Wl,-z,now \
 			-Wl,--warn-shared-textrel \
 			-Wl,--fatal-warnings \
 			-Wl,--icf=safe \
-			$(arch_variant_ldflags)
+			 $(arch_variant_ldflags)
 
 TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 
+ifeq ($(TARGET_USE_O3),true)
+TARGET_GLOBAL_CPPFLAGS += -O3 \
+			-DNDEBUG \
+			-funsafe-loop-optimizations \
+			-fsection-anchors \
+			-fivopts \
+			-ftree-loop-im \
+			-ftree-loop-ivcanon \
+			-ffunction-sections \
+			-fdata-sections \
+			-funswitch-loops \
+			-frename-registers \
+			-fomit-frame-pointer \
+			-fgcse-sm \
+			-fgcse-las \
+			-fweb \
+			-ftracer \
+			-Wstrict-aliasing=3 \
+			-Wno-error=unused-parameter \
+			-Wno-error=unused-but-set-variable \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-parameter \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-enum-compare \
+			-Wno-address \
+			-Wno-unused-variable \
+			-Wno-unused-value \
+			-Wno-format \
+			-Wno-deprecated-declarations \
+			-Wno-sign-compare \
+			-Wno-clobbered \
+			-Wno-strict-aliasing \
+			-Wno-parentheses \
+			-Wno-type-limits \
+			-Wno-multichar
+
+else
+
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+endif
 
 # More flags/options can be added here
-TARGET_RELEASE_CFLAGS := \
+ifeq ($(TARGET_USE_O3),true)
+TARGET_RELEASE_CFLAGS := -O3 \
 			-DNDEBUG \
+			-fno-strict-aliasing \
+			-funsafe-loop-optimizations \
+			-fsection-anchors \
+			-fivopts \
+			-ftree-loop-im \
+			-ftree-loop-ivcanon \
+			-ffunction-sections \
+			-fdata-sections \
+			-funswitch-loops \
+			-frename-registers \
+			-fomit-frame-pointer \
+			-fgcse-sm \
+			-fgcse-las \
+			-fweb \
+			-ftracer \
+			-Wno-error=unused-parameter \
+			-Wno-error=unused-but-set-variable \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-parameter \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-error=maybe-uninitialized \
+			-Wno-unused-but-set-variable \
+			-Wno-maybe-uninitialized \
+			-Wno-enum-compare \
+			-Wno-address \
+			-Wno-unused-variable \
+			-Wno-unused-value \
+			-Wno-format \
+			-Wno-deprecated-declarations \
+			-Wno-sign-compare \
+			-Wno-clobbered \
+			-Wno-strict-aliasing \
+			-Wno-parentheses \
+			-Wno-type-limits \
+			-Wno-multichar
+else
+TARGET_RELEASE_CFLAGS := -DNDEBUG \
 			-g \
 			-Wstrict-aliasing=2 \
 			-fgcse-after-reload \
 			-frerun-cse-after-loop \
 			-frename-registers
-
+endif
 libc_root := bionic/libc
 libm_root := bionic/libm
 libstdc++_root := bionic/libstdc++
@@ -192,9 +328,8 @@ libthread_db_root := bionic/libthread_db
 
 ## on some hosts, the target cross-compiler is not available so do not run this command
 ifneq ($(wildcard $(TARGET_CC)),)
-# We compile with the global cflags to ensure that
-# any flags which affect libgcc are correctly taken
-# into account.
+# We compile with the global cflags to ensure that any flags
+# which affect libgcc are correctly taken into account.
 TARGET_LIBGCC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) -print-libgcc-file-name)
 target_libgcov := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
         -print-file-name=libgcov.a)
@@ -232,7 +367,7 @@ endif
 # unless CUSTOM_KERNEL_HEADERS is defined, we're going to use
 # symlinks located in out/ to point to the appropriate kernel
 # headers. see 'config/kernel_headers.make' for more details
-#
+
 ifneq ($(CUSTOM_KERNEL_HEADERS),)
     KERNEL_HEADERS_COMMON := $(CUSTOM_KERNEL_HEADERS)
     KERNEL_HEADERS_ARCH   := $(CUSTOM_KERNEL_HEADERS)

@@ -12,13 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 # Select a combo based on the compiler being used.
 #
 # Inputs:
 #	combo_target -- prefix for final variables (HOST_ or TARGET_)
-#
+
 
 # Build a target string like "linux-arm" or "darwin-x86".
 combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
@@ -46,14 +45,85 @@ $(combo_target)HAVE_STRLCPY := 0
 $(combo_target)HAVE_STRLCAT := 0
 $(combo_target)HAVE_KERNEL_MODULES := 0
 
-$(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
 ifeq ($(TARGET_USE_03),true)
-$(combo_target)RELEASE_CFLAGS := -O3 -g -fno-strict-aliasing
-$(combo_target)GLOBAL_LDFLAGS := -Wl,-O3
+$(combo_target)GLOBAL_CFLAGS := -O3 \
+				-DNDEBUG \
+				-funsafe-loop-optimizations \
+				-fivopts \
+				-ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-frerun-cse-after-loop \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-fno-exceptions \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
+$(combo_target)RELEASE_CFLAGS := -O3 \
+				-DNDEBUG \
+				-fno-strict-aliasing \
+				-funsafe-loop-optimizations \
+				-fivopts \
+				-ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-frerun-cse-after-loop \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
+
+$(combo_target)GLOBAL_LDFLAGS := -Wl,-O1 -Wl,--as-needed -Wl,--relax -Wl,--sort-common -Wl,--gc-sections
 else
+$(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
 $(combo_target)RELEASE_CFLAGS := -Os -g -fno-strict-aliasing
 $(combo_target)GLOBAL_LDFLAGS :=
 endif
+
 $(combo_target)GLOBAL_ARFLAGS := crsP
 
 $(combo_target)EXECUTABLE_SUFFIX :=
