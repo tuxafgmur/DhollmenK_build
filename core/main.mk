@@ -237,8 +237,9 @@ user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
 tags_to_install :=
 ifneq (,$(user_variant))
-  # Target is secure in user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
+  # Target is (Dhollmen Not) secure in user builds.
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
 
   ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
@@ -325,14 +326,11 @@ ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
   # additional storage requirements for ".odex" files can cause /system
   # to overflow on some devices, so this is configured separately for
   # each product.
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.checkjni=false
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y,o=v,v=n
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
-
-# enable vm tracing in files for now to help track
-# the cause of ANRs in the content process
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-file=/data/anr/traces.txt
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns

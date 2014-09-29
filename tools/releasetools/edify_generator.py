@@ -91,11 +91,12 @@ class EdifyGenerator(object):
          ) % (timestamp, timestamp_text))
 
   def AssertDevice(self, device):
-    """Assert that the device identifier is the given string."""
     cmd = ('assert(' +
-           ' || \0'.join(['getprop("ro.product.device") == "%s" || getprop ("ro.build.product") == "%s"'
+           ' || \0'.join(['getprop("ro.product.device") == "%s" || getprop("ro.build.product") == "%s"'
                          % (i, i) for i in device.split(",")]) +
-           ');')
+           ' || abort("This package is for \\"%s\\" devices; '
+           'this is a \\"" + getprop("ro.product.device") + "\\".");'
+           ');') % device
     self.script.append(self._WordWrap(cmd))
 
   def AssertSomeBootloader(self, *bootloaders):
@@ -116,6 +117,12 @@ class EdifyGenerator(object):
     if command == "restore":
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
+
+  def WipeDalvik(self):
+	self.script.append('delete_recursive("/cache/dalvik-cache");')
+
+  def TuneFs(self, part):
+	self.script.append('run_program("/sbin/tune2fs", "-o journal_data_writeback", "/dev/block/mmcblk0p%s");' % (part))
 
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next

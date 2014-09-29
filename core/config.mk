@@ -493,7 +493,7 @@ ifneq ($(SLIM_BUILD),)
 
 ## We need to be sure the global selinux policies are included
 ## last, to avoid accidental resetting by device configs
-$(eval include vendor/slim/sepolicy/sepolicy.mk)
+$(eval include vendor/dhollmen/sepolicy/sepolicy.mk)
 endif
 
 include $(BUILD_SYSTEM)/dumpvar.mk

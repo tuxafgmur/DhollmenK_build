@@ -61,8 +61,8 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^slim_") ; then
-       SLIM_BUILD=$(echo -n $1 | sed -e 's/^slim_//g')
+    if (echo -n $1 | grep -q -e "^dhollmen_") ; then
+       SLIM_BUILD=$(echo -n $1 | sed -e 's/^dhollmen_//g')
     else
        SLIM_BUILD=
     fi
@@ -253,7 +253,6 @@ function addcompletions()
     dir="sdk/bash_completion"
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
-            echo "including $f"
             . $f
         done
     fi
@@ -488,9 +487,8 @@ function breakfast()
     CM_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/slim/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/dhollmen/vendorsetup.sh 2> /dev/null`
         do
-echo "including $f"
             . $f
         done
 unset f
@@ -504,8 +502,8 @@ echo "z$target" | grep -q "-"
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the SLIM model name
-            lunch slim_$target-userdebug
+            # This is probably just the model name
+            lunch dhollmen_$target-userdebug
         fi
 fi
 return $?
@@ -550,22 +548,9 @@ function lunch()
 
     local product=$(echo -n $selection | sed -e "s/-.*$//")
     check_product $product
-    if [ $? -ne 0 ]
-    then
-        # if we can't find a product, try to grab it off the SlimRoms github
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/tools/roomservice.py $product
-        popd > /dev/null
-        check_product $product
-    else
-        build/tools/roomservice.py $product true
-    fi
-    if [ $? -ne 0 ]
-    then
+    if [ $? -ne 0 ]; then
         echo
         echo "** Don't have a product spec for: '$product'"
-        echo "** Do you have the right repo manifest?"
         product=
     fi
 
@@ -1477,7 +1462,6 @@ fi
 for f in `test -d device && find device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null` \
          `test -d vendor && find vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null`
 do
-    echo "including $f"
     . $f
 done
 unset f

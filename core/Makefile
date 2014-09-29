@@ -66,8 +66,8 @@ ADDITIONAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_DEFAULT_PROP_TARGET):
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo "#" > $@; \
-	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
+	$(hide) echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
+		echo "# Dhollmen" >> $@; \
 	        echo "#" >> $@;
 	$(hide) $(foreach line,$(ADDITIONAL_DEFAULT_PROPERTIES), \
 		echo "$(line)" >> $@;)
@@ -194,16 +194,12 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 	        bash $(BUILDINFO_SH) > $@
 	$(hide) $(foreach file,$(system_prop_file), \
 		if [ -f "$(file)" ]; then \
-			echo "#" >> $@; \
 			echo Target buildinfo from: "$(file)"; \
-			echo "# from $(file)" >> $@; \
-			echo "#" >> $@; \
 			cat $(file) >> $@; \
 		fi;)
 	$(if $(ADDITIONAL_BUILD_PROPERTIES), \
-		$(hide) echo >> $@; \
-		        echo "#" >> $@; \
-		        echo "# ADDITIONAL_BUILD_PROPERTIES" >> $@; \
+		$(hide) echo "#" >> $@; \
+		        echo "# additional_build_properties" >> $@; \
 		        echo "#" >> $@; )
 	$(hide) $(foreach line,$(ADDITIONAL_BUILD_PROPERTIES), \
 		echo "$(line)" >> $@;)
@@ -1410,7 +1406,6 @@ endif
 
 BOOT_ZIP_FROM_IMAGE_SCRIPT := ./build/tools/releasetools/boot_flash_from_image
 KERNEL_PATH := $(TARGET_KERNEL_SOURCE)/arch/arm/configs/$(TARGET_KERNEL_CONFIG)
-#BOOT_ZIP_OUT_FILE := Slim-Kernel-$(DEVICE).zip
 
 ifneq ($(SLIM_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
@@ -1448,7 +1443,7 @@ ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
 	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) $(TARGET_CUSTOM_RELEASETOOL)
 else
 	@echo -e ${CL_YLW}"Running releasetool..."${CL_RST}
-	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) ./vendor/slim/tools/squisher
+	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) ./vendor/dhollmen/tools/squisher
 endif
 
 # -----------------------------------------------------------------

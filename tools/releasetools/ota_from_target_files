@@ -377,6 +377,14 @@ def SignOutput(temp_zip_name, output_zip_name):
   common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
                   whole_file=True)
 
+def AppendAssertions(script, info_dict):
+  if not OPTIONS.override_prop:
+      device = GetBuildProp("ro.product.device", info_dict)
+  else:
+      device = GetBuildProp("ro.build.product", info_dict)
+
+  script.AssertDevice(device)
+
 def MakeRecoveryPatch(input_tmp, output_zip, recovery_img, boot_img):
   """Generate a binary patch that creates the recovery image starting
   with the boot image.  (Most of the space in these images is just the
@@ -459,6 +467,8 @@ def WriteFullOTAPackage(input_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
+  # AppendAssertions(script, OPTIONS.info_dict)
+
   device_specific.FullOTA_Assertions()
 
   # Two-step package strategy (in chronological order, which is *not*
@@ -480,8 +490,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
   #       set up system to update recovery partition on first boot
   #    complete script normally (allow recovery to mark itself finished and reboot)
 
-#  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
-#                                         OPTIONS.input_tmp, "RECOVERY")
   if OPTIONS.two_step:
     if not OPTIONS.info_dict.get("multistage_support", None):
       assert False, "two-step packages not supported by this build"
@@ -506,21 +514,17 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     script.Mount("/system")
     script.RunBackup("backup")
     script.Unmount("/system")
+    script.Unmount("/cache")
+    script.Mount("/cache")
+    script.WipeDalvik()
+    script.Unmount("/cache")
 
-  script.ShowProgress(0.5, 0)
-  script.Print("                    _____________________ ")
-  script.Print("                   /     www.slimroms.net|")
-  script.Print("                  /                      |")
-  script.Print("                 /    ___________________|")
-  script.Print("                /    /    ___             ")
-  script.Print("               /    / ___/   \            ")
-  script.Print("              /    / /   \___/____   ____ ")
-  script.Print("             /    /  |   |___/    \_/    |")
-  script.Print(" ___________/    /   |   |   |           |")
-  script.Print("|               /    |   |   |   |   |   |")
-  script.Print("|              /     |   |   |   |   |   |")
-  script.Print("|_____________/      \___^___^___^___^___/")
-  script.Print(" ")
+  script.Print("                           ");
+  script.Print("                           ");
+  script.Print(" ------------------------- ");
+  script.Print("  Installing Dhollmen Rom  ");
+  script.Print(" ------------------------- ");
+  script.Print("                           ");
 
   if OPTIONS.wipe_user_data:
     script.FormatPartition("/data")
@@ -543,10 +547,6 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   boot_img = common.GetBootableImage("boot.img", "boot.img",
                                      OPTIONS.input_tmp, "BOOT")
 
-  #recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
-  #                                       OPTIONS.input_tmp, "RECOVERY")
-  #MakeRecoveryPatch(OPTIONS.input_tmp, output_zip, recovery_img, boot_img)
-
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
 
@@ -560,15 +560,25 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   script.ShowProgress(0.2, 10)
   script.Print("Flashing Boot Image...")
+  script.UnmountAll()
   script.WriteRawImage("/boot", "boot.img")
 
+  script.TuneFs("7")
+  script.TuneFs("9")
+  script.TuneFs("10")
+
   script.ShowProgress(0.1, 0)
+
+  script.Print("                          ");
+  script.Print("                          ");
+  script.Print("  Dhollmen Rom Installed  ");
+  script.Print("                          ");
+  script.Print("                          ");
+
   device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
-
-  script.UnmountAll()
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -714,7 +724,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     if d is None or len(d) > tf.size * OPTIONS.patch_threshold or \
         path not in known_paths:
       # patch is almost as big as the file; don't bother patching
-      # or a patch + rename cannot take place due to the target 
+      # or a patch + rename cannot take place due to the target
       # directory not existing
       tf.AddToZip(output_zip)
       verbatim_targets.append((tf.name, tf.size))
