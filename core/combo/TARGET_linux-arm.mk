@@ -67,105 +67,103 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-ifeq ($(TARGET_USE_O3),true)
-
-TARGET_arm_CFLAGS := 	-O3 \
-			-DNDEBUG \
-			-fstrict-aliasing \
-			-funsafe-loop-optimizations \
-			-fsection-anchors \
-			-fivopts -ftree-loop-im \
-			-ftree-loop-ivcanon \
-			-ffunction-sections \
-			-fdata-sections \
-			-funswitch-loops \
-			-frename-registers \
-			-fomit-frame-pointer \
-			-fgcse-sm \
-			-fgcse-las \
-			-fweb \
-			-ftracer \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-parameter \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-enum-compare \
-			-Wno-address \
-			-Wno-unused-variable \
-			-Wno-unused-value \
-			-Wno-format \
-			-Wno-deprecated-declarations \
-			-Wno-sign-compare \
-			-Wno-clobbered \
-			-Wno-strict-aliasing \
-			-Wno-parentheses \
-			-Wno-type-limits \
-			-Wno-multichar
+ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
+	TARGET_arm_CFLAGS :=    -Os \
+				-DNDEBUG \
+				-fomit-frame-pointer \
+				-fstrict-aliasing    \
+				-fno-zero-initialized-in-bss \
+				-funswitch-loops \
+				-fno-tree-vectorize \
+				-Wno-unused-parameter \
+				-Wno-unused-value \
+				-Wno-unused-function
 else
-TARGET_arm_CFLAGS :=    -Os \
-			-DNDEBUG \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing    \
-                        -fno-zero-initialized-in-bss \
-                        -funswitch-loops \
-                        -fno-tree-vectorize \
-                        -Wno-unused-parameter \
-                        -Wno-unused-value \
-                        -Wno-unused-function
+	TARGET_arm_CFLAGS := 	$(TARGET_USE_OPTIMIZE) \
+				-DNDEBUG \
+				-fstrict-aliasing \
+				-funsafe-loop-optimizations \
+				-fsection-anchors \
+				-fivopts -ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
 endif
 
-# Modules can choose to compile some source as thumb.
-ifeq ($(TARGET_USE_O3),true)
-TARGET_thumb_CFLAGS := 	-mthumb \
-			-O3 \
-			-DNDEBUG \
-			-funsafe-loop-optimizations \
-			-fsection-anchors \
-			-fivopts \
-			-ftree-loop-im \
-			-ftree-loop-ivcanon \
-			-ffunction-sections \
-			-fdata-sections \
-			-funswitch-loops \
-			-frename-registers \
-			-frerun-cse-after-loop \
-			-fomit-frame-pointer \
-			-fgcse-sm \
-			-fgcse-las \
-			-fweb \
-			-ftracer \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-parameter \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-enum-compare \
-			-Wno-address \
-			-Wno-unused-variable \
-			-Wno-unused-value \
-			-Wno-format \
-			-Wno-deprecated-declarations \
-			-Wno-sign-compare \
-			-Wno-clobbered \
-			-Wno-strict-aliasing \
-			-Wno-parentheses \
-			-Wno-type-limits \
-			-Wno-multichar
+ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
+	TARGET_thumb_CFLAGS :=  -mthumb \
+				-Os \
+				-DNDEBUG \
+				-fomit-frame-pointer \
+				-fno-strict-aliasing
 else
-TARGET_thumb_CFLAGS :=  -mthumb \
-			-Os \
-			-DNDEBUG \
-			-fomit-frame-pointer \
-			-fno-strict-aliasing
+	TARGET_thumb_CFLAGS := 	$(TARGET_USE_OPTIMIZE) \
+				-mthumb \
+				-DNDEBUG \
+				-funsafe-loop-optimizations \
+				-fsection-anchors \
+				-fivopts \
+				-ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-frerun-cse-after-loop \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
 endif
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
@@ -227,104 +225,102 @@ TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack \
 
 TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 
-ifeq ($(TARGET_USE_O3),true)
-TARGET_GLOBAL_CPPFLAGS += -O3 \
-			-DNDEBUG \
-			-funsafe-loop-optimizations \
-			-fsection-anchors \
-			-fivopts \
-			-ftree-loop-im \
-			-ftree-loop-ivcanon \
-			-ffunction-sections \
-			-fdata-sections \
-			-funswitch-loops \
-			-frename-registers \
-			-fomit-frame-pointer \
-			-fgcse-sm \
-			-fgcse-las \
-			-fweb \
-			-ftracer \
-			-Wstrict-aliasing=3 \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-parameter \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-enum-compare \
-			-Wno-address \
-			-Wno-unused-variable \
-			-Wno-unused-value \
-			-Wno-format \
-			-Wno-deprecated-declarations \
-			-Wno-sign-compare \
-			-Wno-clobbered \
-			-Wno-strict-aliasing \
-			-Wno-parentheses \
-			-Wno-type-limits \
-			-Wno-multichar
-
+ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
+	TARGET_GLOBAL_CPPFLAGS += -Os -fvisibility-inlines-hidden
 else
 
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+	TARGET_GLOBAL_CPPFLAGS += $(TARGET_USE_OPTIMIZE) \
+				-DNDEBUG \
+				-funsafe-loop-optimizations \
+				-fsection-anchors \
+				-fivopts \
+				-ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-Wstrict-aliasing=3 \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
 endif
 
-# More flags/options can be added here
-ifeq ($(TARGET_USE_O3),true)
-TARGET_RELEASE_CFLAGS := -O3 \
-			-DNDEBUG \
-			-fno-strict-aliasing \
-			-funsafe-loop-optimizations \
-			-fsection-anchors \
-			-fivopts \
-			-ftree-loop-im \
-			-ftree-loop-ivcanon \
-			-ffunction-sections \
-			-fdata-sections \
-			-funswitch-loops \
-			-frename-registers \
-			-fomit-frame-pointer \
-			-fgcse-sm \
-			-fgcse-las \
-			-fweb \
-			-ftracer \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-parameter \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
-			-Wno-unused-but-set-variable \
-			-Wno-maybe-uninitialized \
-			-Wno-enum-compare \
-			-Wno-address \
-			-Wno-unused-variable \
-			-Wno-unused-value \
-			-Wno-format \
-			-Wno-deprecated-declarations \
-			-Wno-sign-compare \
-			-Wno-clobbered \
-			-Wno-strict-aliasing \
-			-Wno-parentheses \
-			-Wno-type-limits \
-			-Wno-multichar
+ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
+	TARGET_RELEASE_CFLAGS := -Os \
+				-DNDEBUG \
+				-Wstrict-aliasing=2 \
+				-fgcse-after-reload \
+				-frerun-cse-after-loop \
+				-frename-registers
 else
-TARGET_RELEASE_CFLAGS := -DNDEBUG \
-			-g \
-			-Wstrict-aliasing=2 \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
+	TARGET_RELEASE_CFLAGS := $(TARGET_USE_OPTIMIZE) \
+				-DNDEBUG \
+				-fno-strict-aliasing \
+				-funsafe-loop-optimizations \
+				-fsection-anchors \
+				-fivopts \
+				-ftree-loop-im \
+				-ftree-loop-ivcanon \
+				-ffunction-sections \
+				-fdata-sections \
+				-funswitch-loops \
+				-frename-registers \
+				-fomit-frame-pointer \
+				-fgcse-sm \
+				-fgcse-las \
+				-fweb \
+				-ftracer \
+				-Wno-error=unused-parameter \
+				-Wno-error=unused-but-set-variable \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-parameter \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-error=maybe-uninitialized \
+				-Wno-unused-but-set-variable \
+				-Wno-maybe-uninitialized \
+				-Wno-enum-compare \
+				-Wno-address \
+				-Wno-unused-variable \
+				-Wno-unused-value \
+				-Wno-format \
+				-Wno-deprecated-declarations \
+				-Wno-sign-compare \
+				-Wno-clobbered \
+				-Wno-strict-aliasing \
+				-Wno-parentheses \
+				-Wno-type-limits \
+				-Wno-multichar
 endif
+
 libc_root := bionic/libc
 libm_root := bionic/libm
 libstdc++_root := bionic/libstdc++
 libthread_db_root := bionic/libthread_db
-
 
 ## on some hosts, the target cross-compiler is not available so do not run this command
 ifneq ($(wildcard $(TARGET_CC)),)
