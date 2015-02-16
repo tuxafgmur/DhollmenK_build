@@ -18,9 +18,26 @@
 # Inputs:
 #	combo_target -- prefix for final variables (HOST_ or TARGET_)
 
-
 # Build a target string like "linux-arm" or "darwin-x86".
 combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
+
+SILENT_FLAGS := \
+	-Wno-error=unused-parameter \
+	-Wno-error=unused-but-set-variable \
+	-Wno-error=maybe-uninitialized \
+	-Wno-address \
+	-Wno-clobbered \
+	-Wno-deprecated-declarations \
+	-Wno-enum-compare \
+	-Wno-format \
+	-Wno-maybe-uninitialized \
+	-Wno-parentheses \
+	-Wno-pointer-arith \
+	-Wno-sign-compare \
+	-Wno-unused-but-set-variable \
+	-Wno-unused-parameter \
+	-Wno-unused-value \
+	-Wno-unused-variable
 
 # Set reasonable defaults for the various variables
 
@@ -45,84 +62,18 @@ $(combo_target)HAVE_STRLCPY := 0
 $(combo_target)HAVE_STRLCAT := 0
 $(combo_target)HAVE_KERNEL_MODULES := 0
 
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	$(combo_target)GLOBAL_CFLAGS  := -fno-exceptions -Wno-multichar
-	$(combo_target)RELEASE_CFLAGS := -Os -DNDEBUG -fno-strict-aliasing
-	$(combo_target)GLOBAL_LDFLAGS :=
-else
-	$(combo_target)GLOBAL_CFLAGS := $(TARGET_USE_OPTIMIZE) \
-					-DNDEBUG \
-					-funsafe-loop-optimizations \
-					-fivopts \
-					-ftree-loop-im \
-					-ftree-loop-ivcanon \
-					-ffunction-sections \
-					-fdata-sections \
-					-funswitch-loops \
-					-frename-registers \
-					-frerun-cse-after-loop \
-					-fomit-frame-pointer \
-					-fgcse-sm \
-					-fgcse-las \
-					-fweb \
-					-ftracer \
-					-fno-exceptions \
-					-Wno-error=unused-parameter \
-					-Wno-error=unused-but-set-variable \
-					-Wno-error=maybe-uninitialized \
-					-Wno-unused-parameter \
-					-Wno-unused-but-set-variable \
-					-Wno-maybe-uninitialized \
-					-Wno-enum-compare \
-					-Wno-address \
-					-Wno-unused-variable \
-					-Wno-unused-value \
-					-Wno-format \
-					-Wno-deprecated-declarations \
-					-Wno-sign-compare \
-					-Wno-clobbered \
-					-Wno-strict-aliasing \
-					-Wno-parentheses \
-					-Wno-type-limits \
-					-Wno-multichar
-	$(combo_target)RELEASE_CFLAGS := $(TARGET_USE_OPTIMIZE) \
-					-DNDEBUG \
-					-fno-strict-aliasing \
-					-funsafe-loop-optimizations \
-					-fivopts \
-					-ftree-loop-im \
-					-ftree-loop-ivcanon \
-					-ffunction-sections \
-					-fdata-sections \
-					-funswitch-loops \
-					-frename-registers \
-					-frerun-cse-after-loop \
-					-fomit-frame-pointer \
-					-fgcse-sm \
-					-fgcse-las \
-					-fweb \
-					-ftracer \
-					-Wno-error=unused-parameter \
-					-Wno-error=unused-but-set-variable \
-					-Wno-error=maybe-uninitialized \
-					-Wno-unused-parameter \
-					-Wno-unused-but-set-variable \
-					-Wno-maybe-uninitialized \
-					-Wno-enum-compare \
-					-Wno-address \
-					-Wno-unused-variable \
-					-Wno-unused-value \
-					-Wno-format \
-					-Wno-deprecated-declarations \
-					-Wno-sign-compare \
-					-Wno-clobbered \
-					-Wno-strict-aliasing \
-					-Wno-parentheses \
-					-Wno-type-limits \
-					-Wno-multichar
-	$(combo_target)GLOBAL_LDFLAGS := -Wl,-O1 -Wl,--as-needed -Wl,--relax -Wl,--sort-common -Wl,--gc-sections
-endif
+$(combo_target)GLOBAL_CFLAGS := \
+		-fno-exceptions \
+		-Wno-multichar \
+		$(SILENT_FLAGS)
 
+$(combo_target)RELEASE_CFLAGS := \
+		-O2 \
+		-g \
+		-fno-strict-aliasing \
+		$(SILENT_FLAGS)
+
+$(combo_target)GLOBAL_LDFLAGS :=
 $(combo_target)GLOBAL_ARFLAGS := crsP
 
 $(combo_target)EXECUTABLE_SUFFIX :=

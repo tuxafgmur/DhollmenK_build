@@ -12,13 +12,9 @@ define clang-flags-subst
   $(eval $(call do-clang-flags-subst,$(1),$(2)))
 endef
 
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	CLANG_CONFIG_EXTRA_CFLAGS := \
-		-Os -D__compiler_offsetof=__builtin_offsetof
-else
-	CLANG_CONFIG_EXTRA_CFLAGS := \
-		$(TARGET_USE_OPTIMIZE) -Qunused-arguments -Wno-maybe-uninitialized -Wno-unknown-warning-option -D__compiler_offsetof=__builtin_offsetof
-endif
+CLANG_CONFIG_EXTRA_CFLAGS := \
+  -D__compiler_offsetof=__builtin_offsetof \
+  -Qunused-arguments -Wno-maybe-uninitialized -Wno-unknown-warning-option
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops

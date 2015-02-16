@@ -67,104 +67,19 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	TARGET_arm_CFLAGS :=    -Os \
-				-DNDEBUG \
-				-fomit-frame-pointer \
-				-fstrict-aliasing    \
-				-fno-zero-initialized-in-bss \
-				-funswitch-loops \
-				-fno-tree-vectorize \
-				-Wno-unused-parameter \
-				-Wno-unused-value \
-				-Wno-unused-function
-else
-	TARGET_arm_CFLAGS := 	$(TARGET_USE_OPTIMIZE) \
-				-DNDEBUG \
-				-fstrict-aliasing \
-				-funsafe-loop-optimizations \
-				-fsection-anchors \
-				-fivopts -ftree-loop-im \
-				-ftree-loop-ivcanon \
-				-ffunction-sections \
-				-fdata-sections \
-				-funswitch-loops \
-				-frename-registers \
-				-fomit-frame-pointer \
-				-fgcse-sm \
-				-fgcse-las \
-				-fweb \
-				-ftracer \
-				-Wno-error=unused-parameter \
-				-Wno-error=unused-but-set-variable \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-parameter \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-enum-compare \
-				-Wno-address \
-				-Wno-unused-variable \
-				-Wno-unused-value \
-				-Wno-format \
-				-Wno-deprecated-declarations \
-				-Wno-sign-compare \
-				-Wno-clobbered \
-				-Wno-strict-aliasing \
-				-Wno-parentheses \
-				-Wno-type-limits \
-				-Wno-multichar
-endif
+TARGET_arm_CFLAGS :=    -O2 \
+                        -fomit-frame-pointer \
+                        -fstrict-aliasing \
+                        -funswitch-loops \
+                        $(SILENT_FLAGS)
 
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	TARGET_thumb_CFLAGS :=  -mthumb \
-				-Os \
-				-DNDEBUG \
-				-fomit-frame-pointer \
-				-fno-strict-aliasing
-else
-	TARGET_thumb_CFLAGS := 	$(TARGET_USE_OPTIMIZE) \
-				-mthumb \
-				-DNDEBUG \
-				-funsafe-loop-optimizations \
-				-fsection-anchors \
-				-fivopts \
-				-ftree-loop-im \
-				-ftree-loop-ivcanon \
-				-ffunction-sections \
-				-fdata-sections \
-				-funswitch-loops \
-				-frename-registers \
-				-frerun-cse-after-loop \
-				-fomit-frame-pointer \
-				-fgcse-sm \
-				-fgcse-las \
-				-fweb \
-				-ftracer \
-				-Wno-error=unused-parameter \
-				-Wno-error=unused-but-set-variable \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-parameter \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-enum-compare \
-				-Wno-address \
-				-Wno-unused-variable \
-				-Wno-unused-value \
-				-Wno-format \
-				-Wno-deprecated-declarations \
-				-Wno-sign-compare \
-				-Wno-clobbered \
-				-Wno-strict-aliasing \
-				-Wno-parentheses \
-				-Wno-type-limits \
-				-Wno-multichar
-endif
+TARGET_thumb_CFLAGS :=  -O2 \
+			-mthumb \
+                        -fomit-frame-pointer \
+                        -fno-strict-aliasing \
+                        -fno-tree-vectorize \
+                        -funsafe-math-optimizations \
+			$(SILENT_FLAGS)
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
@@ -197,10 +112,10 @@ TARGET_GLOBAL_CFLAGS += -msoft-float \
 			-funwind-tables \
 			-fstack-protector \
 			-Wa,--noexecstack \
-			-Werror=format-security \
 			-D_FORTIFY_SOURCE=2 \
 			-fno-short-enums \
 			 $(arch_variant_cflags) \
+			 $(SILENT_FLAGS) \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
@@ -209,7 +124,8 @@ TARGET_GLOBAL_CFLAGS += -msoft-float \
 # in gcc-4.4.x.  We also want to disable sincos optimization globally
 # by turning off the builtin sin function.
 ifneq ($(filter 4.9 4.9.% 4.8 4.8.% 4.7 4.7.% 4.6 4.6.%, $(TARGET_GCC_VERSION)),)
-TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
+TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable \
+			-fno-builtin-sin \
 			-fno-strict-volatile-bitfields
 endif
 
@@ -225,97 +141,16 @@ TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack \
 
 TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	TARGET_GLOBAL_CPPFLAGS += -Os -fvisibility-inlines-hidden
-else
+TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
-	TARGET_GLOBAL_CPPFLAGS += $(TARGET_USE_OPTIMIZE) \
-				-DNDEBUG \
-				-funsafe-loop-optimizations \
-				-fsection-anchors \
-				-fivopts \
-				-ftree-loop-im \
-				-ftree-loop-ivcanon \
-				-ffunction-sections \
-				-fdata-sections \
-				-funswitch-loops \
-				-frename-registers \
-				-fomit-frame-pointer \
-				-fgcse-sm \
-				-fgcse-las \
-				-fweb \
-				-ftracer \
-				-Wstrict-aliasing=3 \
-				-Wno-error=unused-parameter \
-				-Wno-error=unused-but-set-variable \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-parameter \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-enum-compare \
-				-Wno-address \
-				-Wno-unused-variable \
-				-Wno-unused-value \
-				-Wno-format \
-				-Wno-deprecated-declarations \
-				-Wno-sign-compare \
-				-Wno-clobbered \
-				-Wno-strict-aliasing \
-				-Wno-parentheses \
-				-Wno-type-limits \
-				-Wno-multichar
-endif
-
-ifeq ($(strip $(TARGET_USE_OPTIMIZE)),)
-	TARGET_RELEASE_CFLAGS := -Os \
-				-DNDEBUG \
-				-Wstrict-aliasing=2 \
-				-fgcse-after-reload \
-				-frerun-cse-after-loop \
-				-frename-registers
-else
-	TARGET_RELEASE_CFLAGS := $(TARGET_USE_OPTIMIZE) \
-				-DNDEBUG \
-				-fno-strict-aliasing \
-				-funsafe-loop-optimizations \
-				-fsection-anchors \
-				-fivopts \
-				-ftree-loop-im \
-				-ftree-loop-ivcanon \
-				-ffunction-sections \
-				-fdata-sections \
-				-funswitch-loops \
-				-frename-registers \
-				-fomit-frame-pointer \
-				-fgcse-sm \
-				-fgcse-las \
-				-fweb \
-				-ftracer \
-				-Wno-error=unused-parameter \
-				-Wno-error=unused-but-set-variable \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-parameter \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-error=maybe-uninitialized \
-				-Wno-unused-but-set-variable \
-				-Wno-maybe-uninitialized \
-				-Wno-enum-compare \
-				-Wno-address \
-				-Wno-unused-variable \
-				-Wno-unused-value \
-				-Wno-format \
-				-Wno-deprecated-declarations \
-				-Wno-sign-compare \
-				-Wno-clobbered \
-				-Wno-strict-aliasing \
-				-Wno-parentheses \
-				-Wno-type-limits \
-				-Wno-multichar
-endif
+TARGET_RELEASE_CFLAGS := \
+			-DNDEBUG \
+			-g \
+			-Wstrict-aliasing=2 \
+			-fgcse-after-reload \
+			-frerun-cse-after-loop \
+			-frename-registers \
+			$(SILENT_FLAGS) \
 
 libc_root := bionic/libc
 libm_root := bionic/libm
