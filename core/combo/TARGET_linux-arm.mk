@@ -73,12 +73,10 @@ TARGET_arm_CFLAGS :=    -O2 \
                         -funswitch-loops \
                         $(SILENT_FLAGS)
 
-TARGET_thumb_CFLAGS :=  -O2 \
+TARGET_thumb_CFLAGS :=  -Os \
 			-mthumb \
                         -fomit-frame-pointer \
                         -fno-strict-aliasing \
-                        -fno-tree-vectorize \
-                        -funsafe-math-optimizations \
 			$(SILENT_FLAGS)
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
